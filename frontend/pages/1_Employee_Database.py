@@ -28,13 +28,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Back button
-if st.button("Back to Home", use_container_width=False):
+if st.button(get_text("back_to_home"), use_container_width=False):
     st.switch_page("app.py")
 
 st.markdown(f"""
     <div class="premium-header" style="padding: 1.5rem;">
         <div class="premium-title">{get_text('emp_title')}</div>
-        <div class="premium-subtitle">Manage employee records efficiently</div>
+        <div class="premium-subtitle">{get_text('emp_subtitle')}</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -52,7 +52,7 @@ with tab_list:
     with col2:
         status_filter = st.selectbox(get_text("filter_by"), [get_text("active"), get_text("all"), get_text("resigned")])
     with col1:
-        search = st.text_input(get_text("emp_search"), placeholder=get_text("search"))
+        search = st.text_input(get_text("emp_search"), placeholder=get_text("emp_search_placeholder"))
     
     status_map = {get_text("active"): "active", get_text("all"): "all", get_text("resigned"): "resigned"}
     status_value = status_map.get(status_filter, "active")
@@ -76,45 +76,47 @@ with tab_list:
                     with col4:
                         status_text = get_text("active") if emp['status'] == 'active' else get_text("resigned")
                         st.markdown(f'<span style="background: {"#6fb398" if emp["status"] == "active" else "#d48474"}20; color: {"#6fb398" if emp["status"] == "active" else "#d48474"}; padding: 4px 12px; border-radius: 20px;">{status_text}</span>', unsafe_allow_html=True)
-                    with st.expander("View Details"):
+                    with st.expander(get_text("view_details")):
                         col_a, col_b = st.columns(2)
                         with col_a:
-                            st.write(f"**Level:** {emp.get('level', '-')}")
-                            st.write(f"**Hire Date:** {emp.get('hire_date', '-')}")
+                            st.write(f"**{get_text('emp_level')}:** {emp.get('level', '-')}")
+                            st.write(f"**{get_text('emp_hire_date')}:** {emp.get('hire_date', '-')}")
                         with col_b:
-                            st.write(f"**Salary:** ฿{emp.get('salary', 0):,.2f}")
-                            st.write(f"**Bank:** {emp.get('bank_name', '-')}")
+                            st.write(f"**{get_text('emp_salary')}:** ฿{emp.get('salary', 0):,.2f}")
+                            st.write(f"**{get_text('emp_bank')}:** {emp.get('bank_name', '-')}")
                     st.divider()
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"{get_text('error')}: {e}")
 
 with tab_add:
     with st.form("add_employee_form"):
         col1, col2 = st.columns(2)
         with col1:
-            emp_code = st.text_input("Employee Code*")
-            first_name = st.text_input("First Name*")
-            last_name = st.text_input("Last Name*")
-            department = st.selectbox("Department*", ["Engineering", "HR", "Sales", "Marketing", "Finance"])
-            position = st.text_input("Position*")
-            level = st.selectbox("Level*", ["Junior", "Senior", "Manager", "Director"])
+            emp_code = st.text_input(f"{get_text('emp_code')}*")
+            first_name = st.text_input(f"{get_text('emp_first_name')}*")
+            last_name = st.text_input(f"{get_text('emp_last_name')}*")
+            department = st.selectbox(f"{get_text('emp_department')}*", [get_text('dept_engineering'), get_text('dept_hr'), get_text('dept_sales'), get_text('dept_marketing'), get_text('dept_finance')])
+            position = st.text_input(f"{get_text('emp_position')}*")
+            level = st.selectbox(f"{get_text('emp_level')}*", [get_text('level_entry'), get_text('level_mid'), get_text('level_senior'), get_text('level_lead'), get_text('level_executive')])
         with col2:
-            email = st.text_input("Email*")
-            phone = st.text_input("Phone*")
-            hire_date = st.date_input("Hire Date*", datetime.now())
-            salary = st.number_input("Salary (THB)", min_value=0, step=1000)
-            bank_name = st.selectbox("Bank", ["Kasikorn", "SCB", "Bangkok Bank", "Krungsri"])
-            bank_account = st.text_input("Bank Account")
-        submitted = st.form_submit_button("Add Employee", use_container_width=True)
+            email = st.text_input(f"{get_text('emp_email')}*")
+            phone = st.text_input(f"{get_text('emp_phone')}*")
+            hire_date = st.date_input(f"{get_text('emp_hire_date')}*", datetime.now())
+            salary = st.number_input(f"{get_text('emp_salary')}", min_value=0, step=1000)
+            bank_name = st.selectbox(get_text("emp_bank"), [get_text('bank_kasikorn'), get_text('bank_scb'), get_text('bank_bangkok'), get_text('bank_krungsri')])
+            bank_account = st.text_input(get_text("emp_bank_account"))
+        submitted = st.form_submit_button(get_text("add"), use_container_width=True)
         if submitted and emp_code and first_name and last_name and email and phone:
             data = {"employee_code": emp_code, "first_name": first_name, "last_name": last_name, "department": department, "position": position, "level": level, "hire_date": hire_date.isoformat(), "email": email, "phone": phone, "salary": salary, "bank_name": bank_name, "bank_account": bank_account}
             try:
                 r = requests.post(f"{API_URL}/employees", json=data)
                 if r.status_code == 200:
-                    st.success("Employee added!")
+                    st.success(get_text("emp_add_success"))
                     st.rerun()
-            except: st.error("Error")
-        elif submitted: st.error("Please fill required fields")
+            except: 
+                st.error(get_text("error"))
+        elif submitted: 
+            st.error(get_text("required_field"))
 
 with tab_stats:
     try:
@@ -124,12 +126,17 @@ with tab_stats:
             df = pd.DataFrame(employees)
             if not df.empty:
                 col1, col2, col3 = st.columns(3)
-                with col1: st.metric("Total", len(df))
-                with col2: st.metric("Active", len(df[df['status'] == 'active']))
-                with col3: st.metric("Departments", df['department'].nunique())
+                with col1: 
+                    st.metric(get_text("emp_total"), len(df))
+                with col2: 
+                    st.metric(get_text("emp_active"), len(df[df['status'] == 'active']))
+                with col3: 
+                    st.metric(get_text("emp_departments"), df['department'].nunique())
                 dept_stats = df[df['status'] == 'active']['department'].value_counts()
-                fig = px.bar(x=dept_stats.index, y=dept_stats.values, title="Employees by Department", color=dept_stats.values, color_continuous_scale='Blues')
+                fig = px.bar(x=dept_stats.index, y=dept_stats.values, title=get_text("dashboard_by_dept"), color=dept_stats.values, color_continuous_scale='Blues')
                 fig.update_layout(height=400)
                 st.plotly_chart(fig, use_container_width=True)
-            else: st.info("No data")
-    except: st.error("Error loading stats")
+            else: 
+                st.info(get_text("emp_no_data"))
+    except: 
+        st.error(f"{get_text('error')} {get_text('loading')}")

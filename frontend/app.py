@@ -30,9 +30,9 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Language Selection Card
-st.markdown("""
+st.markdown(f"""
     <div class="language-card">
-        <div class="language-card-title">SELECT LANGUAGE</div>
+        <div class="language-card-title">{get_text('select_language')}</div>
         <div class="language-buttons">
     </div>
 """, unsafe_allow_html=True)
@@ -40,9 +40,9 @@ st.markdown("""
 # Language buttons
 current_lang = st.session_state.get('language', 'English')
 lang_options = [
-    {"code": "English", "name": "English", "local": "English"},
-    {"code": "Thai", "name": "Thai", "local": "ภาษาไทย"},
-    {"code": "Chinese", "name": "Chinese", "local": "中文"}
+    {"code": "English", "name": get_text('lang_english'), "local": "English"},
+    {"code": "Thai", "name": get_text('lang_thai'), "local": "ภาษาไทย"},
+    {"code": "Chinese", "name": get_text('lang_chinese'), "local": "中文"}
 ]
 
 cols = st.columns(3)
@@ -79,7 +79,7 @@ for idx, item in enumerate(nav_items):
                 <div class="nav-card-desc">{item['desc']}</div>
             </div>
         """, unsafe_allow_html=True)
-        if st.button(f"Launch {item['title']}", key=f"nav_{idx}", use_container_width=True):
+        if st.button(f"{get_text('launch')} {item['title']}", key=f"nav_{idx}", use_container_width=True):
             st.switch_page(item["page"])
 
 st.markdown('</div>', unsafe_allow_html=True)
@@ -87,12 +87,12 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Stats Preview
 st.markdown("---")
 st.markdown('<div class="stats-preview">', unsafe_allow_html=True)
-st.markdown(f"<p style='text-align: center; color: #7a9bb0;'>AI-Powered HR Management System | Version 2.0</p>", unsafe_allow_html=True)
+st.markdown(f"<p style='text-align: center; color: #7a9bb0;'>{get_text('footer_text')}</p>", unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer
 st.markdown(f"""
     <div class="premium-footer">
-        <p>Powered by Google Gemini AI | Intelligent Resume Screening | HR Analytics</p>
+        <p>{get_text('footer_powered_by')}</p>
     </div>
 """, unsafe_allow_html=True)
