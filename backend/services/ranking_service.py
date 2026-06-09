@@ -1,3 +1,4 @@
+# backend/services/ranking_service.py
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from backend.services.ai_service import evaluate_resume
@@ -13,8 +14,8 @@ def rank_candidates(resumes, jd_text, output_lang="Thai"):
             resume_text = extract_text_from_pdf(file_bytes)
             
             if resume_text:
-                # เพิ่ม delay ก่อนเรียก API เพื่อไม่ให้ quota หมด
-                time.sleep(2)  # รอ 2 วินาทีระหว่างแต่ละ request
+                # Ollama ไม่มี quota limit เลยไม่ต้องรอ
+                # time.sleep(2)  # comment out หรือลบเลย
                 analysis = evaluate_resume(resume_text, jd_text, output_lang)
                 analysis['candidate_name'] = filename.replace('.pdf', '').replace('_', ' ').title()
                 return analysis
@@ -23,8 +24,8 @@ def rank_candidates(resumes, jd_text, output_lang="Thai"):
             print(f"Error: {e}")
             return None
     
-    # ลดจำนวน workers เหลือ 1 เพื่อไม่ให้เรียก API พร้อมกัน
-    with ThreadPoolExecutor(max_workers=1) as executor:
+    # สามารถเพิ่ม max_workers ได้ เพราะ Ollama ไม่ limit
+    with ThreadPoolExecutor(max_workers=3) as executor:
         futures = [executor.submit(process_one, f) for f in resumes]
         for future in as_completed(futures):
             result = future.result()

@@ -1,3 +1,4 @@
+# backend/main.py
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
@@ -24,7 +25,7 @@ init_db()
 
 @app.get("/")
 async def health_check():
-    return {"status": "online", "message": "AI Resume Screener & HR API is running"}
+    return {"status": "online", "message": "AI Resume Screener & HR API is running with Ollama"}
 
 @app.post("/screen")
 async def screen(
@@ -36,6 +37,11 @@ async def screen(
     if results:
         save_history(jd_text, results)
     return results
+
+@app.get("/health/ollama")
+async def ollama_health():
+    from backend.services.ai_service import check_ollama_health
+    return {"ollama_available": check_ollama_health()}
 
 @app.get("/history")
 async def get_history():
