@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+from components.language_manager import get_text
 
 def render_metric_cards(results):
     """Render premium metric cards"""
@@ -8,11 +9,17 @@ def render_metric_cards(results):
     
     col1, col2, col3, col4 = st.columns(4)
     
+    # Calculate metrics
+    total_candidates = len(results)
+    avg_score = f"{sum(r['score'] for r in results) / len(results):.1f}%"
+    top_score = f"{max(r['score'] for r in results)}%"
+    passing_rate = f"{len([r for r in results if r['score'] >= 70]) / len(results) * 100:.0f}%"
+    
     metrics = [
-        (len(results), "Total Candidates"),
-        (f"{sum(r['score'] for r in results) / len(results):.1f}%", "Average Score"),
-        (f"{max(r['score'] for r in results)}%", "Top Score"),
-        (f"{len([r for r in results if r['score'] >= 70]) / len(results) * 100:.0f}%", "Passing Rate")
+        (total_candidates, get_text("total_candidates")),
+        (avg_score, get_text("average_score")),
+        (top_score, get_text("top_score")),
+        (passing_rate, get_text("passing_rate"))
     ]
     
     for col, (value, label) in zip([col1, col2, col3, col4], metrics):
@@ -26,13 +33,13 @@ def render_metric_cards(results):
 
 def render_loading_animation():
     """Show premium loading animation"""
-    st.markdown("""
+    st.markdown(f"""
         <div class="premium-loader">
             <div class="loader-ring">
                 <div></div><div></div><div></div>
             </div>
-            <p style="margin-top: 1.5rem; color: #5b8caf; font-weight: 500;">AI is analyzing resumes...</p>
-            <p style="color: #7a9bb0; font-size: 0.8rem;">Using advanced AI algorithms</p>
+            <p style="margin-top: 1.5rem; color: #5b8caf; font-weight: 500;">{get_text('analyzing')}</p>
+            <p style="color: #7a9bb0; font-size: 0.8rem;">{get_text('analyzing_subtitle')}</p>
         </div>
     """, unsafe_allow_html=True)
     time.sleep(1)
@@ -40,19 +47,19 @@ def render_loading_animation():
 def render_candidate_card(data, index=0):
     """Render premium candidate card"""
     
-    # Determine badge
+    # Determine badge text and class based on score
     if data['score'] >= 85:
         badge_class = "badge-excellent"
-        badge_text = "Exceptional"
+        badge_text = get_text("badge_exceptional")
     elif data['score'] >= 70:
         badge_class = "badge-good"
-        badge_text = "Strong Match"
+        badge_text = get_text("badge_strong_match")
     elif data['score'] >= 55:
         badge_class = "badge-fair"
-        badge_text = "Good Match"
+        badge_text = get_text("badge_good_match")
     else:
         badge_class = "badge-review"
-        badge_text = "Needs Review"
+        badge_text = get_text("badge_needs_review")
     
     # Calculate circle dashoffset
     radius = 35
@@ -91,20 +98,38 @@ def render_candidate_card(data, index=0):
         </div>
     """, unsafe_allow_html=True)
     
-    with st.expander("View Detailed Analysis"):
+    with st.expander(get_text("view_details")):
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("**Matched Skills**")
-            for s in data.get('matched_skills', [])[:6]:
-                st.caption(f"• {s}")
+            st.markdown(f"**{get_text('matched_skills')}**")
+            if data.get('matched_skills'):
+                for s in data.get('matched_skills', [])[:6]:
+                    st.caption(f"• {s}")
+            else:
+                st.caption(f"• {get_text('none_found')}")
         with col2:
-            st.markdown("**Missing Skills**")
-            for s in data.get('missing_skills', [])[:6]:
-                st.caption(f"• {s}")
+            st.markdown(f"**{get_text('missing_skills')}**")
+            if data.get('missing_skills'):
+                for s in data.get('missing_skills', [])[:6]:
+                    st.caption(f"• {s}")
+            else:
+                st.caption(f"• {get_text('none_found')}")
         
         st.divider()
         col_a, col_b = st.columns(2)
         with col_a:
-            st.info(f"**Strengths**\n" + "\n".join([f"• {s}" for s in data.get('strengths', [])[:3]]))
+            strengths_text = ""
+            if data.get('strengths'):
+                for s in data.get('strengths', [])[:3]:
+                    strengths_text += f"• {s}\n"
+            else:
+                strengths_text = f"• {get_text('none_found')}"
+            st.info(f"**{get_text('resume_strengths')}**\n{strengths_text}")
         with col_b:
-            st.warning(f"**Concerns**\n" + "\n".join([f"• {c}" for c in data.get('concerns', [])[:3]]))
+            concerns_text = ""
+            if data.get('concerns'):
+                for c in data.get('concerns', [])[:3]:
+                    concerns_text += f"• {c}\n"
+            else:
+                concerns_text = f"• {get_text('none_found')}"
+            st.warning(f"**{get_text('resume_weaknesses')}**\n{concerns_text}")

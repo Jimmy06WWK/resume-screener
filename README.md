@@ -213,7 +213,8 @@ pip install pdfplumber pypdf2
 - Advanced analytics and predictions
 
 ## Author
-Your Name
+Wachaira 
+Wa
 
 ## License
 MIT

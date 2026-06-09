@@ -35,7 +35,7 @@ def evaluate_resume(resume_text, job_description, output_lang="Thai"):
     """
     
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-2.0-flash",
         contents=prompt,
         config=types.GenerateContentConfig(
             temperature=0.2,

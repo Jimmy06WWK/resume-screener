@@ -5,7 +5,7 @@ from pathlib import Path
 init_language()
 
 st.set_page_config(
-    page_title="AI HR Management System",
+    page_title=get_text("app_title"),  # Changed to use translation
     page_icon="🏢",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -38,19 +38,23 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Language buttons
-current_lang = st.session_state.get('language', 'English')
+current_lang = st.session_state.get('language', 'Thai')  # Changed default to Thai if you prefer
+
+# Define language options with proper display names
 lang_options = [
-    {"code": "English", "name": get_text('lang_english'), "local": "English"},
-    {"code": "Thai", "name": get_text('lang_thai'), "local": "ภาษาไทย"},
-    {"code": "Chinese", "name": get_text('lang_chinese'), "local": "中文"}
+    {"code": "English", "name": get_text('lang_english'), "local": "🇬🇧 English"},
+    {"code": "Thai", "name": get_text('lang_thai'), "local": "🇹🇭 ภาษาไทย"},
+    {"code": "Chinese", "name": get_text('lang_chinese'), "local": "🇨🇳 中文"}
 ]
 
 cols = st.columns(3)
 for idx, lang in enumerate(lang_options):
     with cols[idx]:
         is_active = current_lang == lang["code"]
+        # Style the active language button differently
+        button_label = f"✅ {lang['local']}" if is_active else lang['local']
         if st.button(
-            f"{lang['local']}", 
+            button_label, 
             key=f"lang_{lang['code']}",
             use_container_width=True
         ):
