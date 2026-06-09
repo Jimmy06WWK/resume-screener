@@ -307,31 +307,3 @@ This project is for educational purposes.
 ## 📧 Contact
 
 For questions or suggestions, please open an issue on GitHub.
-
----
-
-**Built with ❤️ using AI, Streamlit, and FastAPI**
-```
-
-## To add screenshots (optional):
-
-Create a `screenshots/` folder and add:
-
-```markdown
-## 📸 Screenshots
-
-### Landing Page
-![Landing Page](screenshots/landing.png)
-
-### AI Resume Screener
-![Resume Screener](screenshots/resume_screener.png)
-
-### Employee Database
-![Employee Database](screenshots/employees.png)
-
-### Recruitment Pipeline
-![Recruitment Pipeline](screenshots/pipeline.png)
-
-### HR Dashboard
-![HR Dashboard](screenshots/dashboard.png)
-```
