@@ -1,38 +1,25 @@
-import json
-import random
+# backend/services/ai_service_mock.py
+from typing import Dict, Any
 
-def evaluate_resume(resume_text, job_description, output_lang="Thai"):
-    """Mock version for testing without API"""
+def analyze_resume_with_ai(job_description: str, resume_text: str, candidate_name: str, language: str = "English") -> Dict[str, Any]:
+    """Mock AI analysis for testing when Ollama is not available"""
     
-    # สุ่มคะแนนตามความยาวของ resume (เพื่อความสมจริง)
-    base_score = min(len(resume_text) / 100, 85)
-    score = min(85, max(40, base_score + random.randint(-10, 10)))
+    # Simple keyword matching for demo
+    keywords = ["python", "javascript", "react", "node", "sql", "aws", "docker", "git"]
+    resume_lower = resume_text.lower()
     
-    # ข้อความตามภาษา
-    if output_lang == "Thai":
-        reason = f"ผู้สมัครมีความเหมาะสมในระดับ {score:.0f}% จากประสบการณ์และทักษะที่เกี่ยวข้อง"
-        matched = ["Python", "Machine Learning", "Data Analysis"]
-        missing = ["Deep Learning", "Cloud Computing"]
-        strengths = ["ทักษะการวิเคราะห์ข้อมูล", "ประสบการณ์โครงการ"]
-        concerns = ["ขาดประสบการณ์ด้าน AI ขั้นสูง"]
-    elif output_lang == "Chinese":
-        reason = f"候选人的匹配度为 {score:.0f}%，基于相关经验和技能"
-        matched = ["Python", "机器学习", "数据分析"]
-        missing = ["深度学习", "云计算"]
-        strengths = ["数据分析技能", "项目经验"]
-        concerns = ["缺乏高级AI经验"]
-    else:
-        reason = f"Candidate matches at {score:.0f}% based on relevant experience and skills"
-        matched = ["Python", "Machine Learning", "Data Analysis"]
-        missing = ["Deep Learning", "Cloud Computing"]
-        strengths = ["Data analysis skills", "Project experience"]
-        concerns = ["Limited advanced AI experience"]
+    matched = [k for k in keywords if k in resume_lower]
+    missing = [k for k in keywords if k not in resume_lower][:5]
+    
+    score = min(100, len(matched) * 15)
     
     return {
-        "score": round(score),
-        "reason": reason,
+        "score": score,
         "matched_skills": matched,
         "missing_skills": missing,
-        "strengths": strengths,
-        "concerns": concerns
+        "strengths": ["Good technical foundation" if matched else "Willing to learn"],
+        "concerns": ["Limited experience" if not matched else "Could improve on missing skills"]
     }
+
+def check_ollama_health() -> bool:
+    return False

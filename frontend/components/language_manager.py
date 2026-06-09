@@ -1028,9 +1028,9 @@ def render_simple_language_selector():
     current_lang = st.session_state.get('language', 'Thai')
     
     lang_options = {
-        "Thai": "Thai",
-        "English": "English",
-        "Chinese": "Chinese"
+        "Thai": "🇹🇭Thai",
+        "English": "🇬🇧English",
+        "Chinese": "🇨🇳Chinese"
     }
     
     selected_lang = st.radio(
