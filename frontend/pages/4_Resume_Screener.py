@@ -34,9 +34,21 @@ col_left, col_right = st.columns([1, 2])
 
 with col_left:
     st.markdown(f"### {get_text('resume_jd')}")
-    jd_input = st.text_area("", height=250, placeholder=get_text("resume_jd_placeholder"), key="jd_input", label_visibility="collapsed")
+    jd_input = st.text_area(
+        "Job Description", 
+        height=250, 
+        placeholder=get_text("resume_jd_placeholder"), 
+        key="jd_input", 
+        label_visibility="hidden"
+    )
     st.markdown(f"### {get_text('resume_upload')}")
-    uploaded_files = st.file_uploader("", type=["pdf"], accept_multiple_files=True, key="file_uploader", label_visibility="collapsed")
+    uploaded_files = st.file_uploader(
+        "Resume Files", 
+        type=["pdf"], 
+        accept_multiple_files=True, 
+        key="file_uploader", 
+        label_visibility="hidden"
+    )
     if uploaded_files: 
         st.success(f"{len(uploaded_files)} {get_text('files_selected')}")
     start_button = st.button(get_text("resume_start"), use_container_width=True, type="primary", disabled=st.session_state['processing'])
